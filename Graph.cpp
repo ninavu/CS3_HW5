@@ -7,9 +7,14 @@ using namespace std;
 #include "Graph.h"
 
 GraphNode* Graph::AddNode(char key, int data){
-	//create an instance of struct
-	// check whether that node already exists? -> make sure each node is unique (same key, different data)?
-	GraphNode *gn = new GraphNode;
+	// check whether that node already exists
+	for (unsigned int i = 0; i < AllNodes.size(); i++){
+		if (AllNodes.at(i)->key == key){
+			throw invalid_argument("Input already exists!");	
+		}
+	}
+	
+	GraphNode *gn = new GraphNode;	//create an instance of struct
 	gn->key = key;
 	gn->data = data;
 	
@@ -20,8 +25,13 @@ GraphNode* Graph::AddNode(char key, int data){
 }
 
 GraphEdge* Graph::AddEdge(GraphNode *gn1, GraphNode *gn2, unsigned int weight){
+	// check whether gn1 and gn2 actually exists in AllNodes
+	if (!(count(AllNodes.begin(), AllNodes.end(), gn1))){
+		throw invalid_argument("Nodes do not exist!");	
+	} else if (!(count(AllNodes.begin(), AllNodes.end(), gn2))){
+		throw invalid_argument("Nodes do not exist!");
+	}	
 	
-	//check whether gn1 and gn2 actually exists in AllNodes, already in AllEdges
 	GraphEdge *ge = new GraphEdge;
 	ge->from = gn1;
 	ge->to = gn2;
@@ -65,7 +75,6 @@ string Graph::GraphNodeToString(const GraphNode *gn){
 
 
 string Graph::GraphEdgeToString(const GraphEdge *ge){
-	// [(a:15)->(c:9) w:2], [(a:15)->(b:12) w:8]
 	string s = "[";
 	s += GraphNodeToString(ge->from);
 	s += "->";
@@ -106,6 +115,11 @@ string Graph::ToString() const{
 
 
 const GraphNode* Graph::NodeAt(unsigned int idx) const{
+	
+	if (idx >= AllNodes.size()){
+		throw invalid_argument("Index out of range!");
+	}
+	
 	return AllNodes.at(idx);
 }
 
