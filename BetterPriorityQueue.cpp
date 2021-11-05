@@ -31,13 +31,12 @@ bool BetterPriorityQueue::Update(DNode dn){
 		
 	if (!(dn > tmp)){
 		this->pop();
-		this->push(dn); 
+		for (unsigned int i = 0; i < list.size(); i++){
+			this->push(list.at(i));
+		}
+		this->push(dn); 	
 	} else {
 		return false;
-	}
-	
-	for (unsigned int i = 0; i < list.size(); i++){
-		this->push(list.at(i));
 	}
 	// if DNode doesn’t match any existing in the queue or doesn’t have a lower priority than the matching DNode in the queue
 	return true;

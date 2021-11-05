@@ -68,8 +68,8 @@ void UpdateTest() {
 	// how you implement the priority queue
 	string soln1 = "[(a: 0), (b: 1), (f: 0), (d: 3), (e: 4), (c: 2)]";
 	string soln2 = "[(f: 0), (b: 1), (a: 0), (d: 3), (e: 4), (c: 2)]";
-	string soln3 = "[(f: 0), (a: 0), (b: 1), (c: 2), (d: 3), (e: 4)]";
-	assert(q.ToString() == soln1 || q.ToString() == soln2 || q.ToString() == soln3);
+	//string soln3 = "[(f: 0), (a: 0), (b: 1), (c: 2), (d: 3), (e: 4)]";
+	assert(q.ToString() == soln1 || q.ToString() == soln2);
 	
 	
 	DNode neg1;
