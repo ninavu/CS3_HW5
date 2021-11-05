@@ -19,17 +19,28 @@ bool BetterPriorityQueue::Contains(DNode dn){
 }
 
 bool BetterPriorityQueue::Update(DNode dn){
+	DNode tmp;
+	vector<DNode> list;
 	
-	for (unsigned int i = 0; i < this->c.size(); i++){
-		if (dn.node == this->c.at(i).node && !(dn > this->c.at(i))){
-			//this->c.at(i).pri = dn.pri;
-			this->push(dn);
-			
-			return true;	
-		} 
+	tmp = this->top();
+	while (!(tmp.node == dn.node)){
+		list.push_back(tmp);
+		this->pop();
+		tmp = this->top();
+	}
+		
+	if (!(dn > tmp)){
+		this->pop();
+		this->push(dn); 
+	} else {
+		return false;
+	}
+	
+	for (unsigned int i = 0; i < list.size(); i++){
+		this->push(list.at(i));
 	}
 	// if DNode doesn’t match any existing in the queue or doesn’t have a lower priority than the matching DNode in the queue
-	return false;
+	return true;
 }
 
 string BetterPriorityQueue::DnodeToString(DNode dn){

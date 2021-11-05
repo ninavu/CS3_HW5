@@ -19,9 +19,15 @@ void ContainsTest() {
 
 	assert(q.Contains(n) == true);
 	
-
-	// more tests go here!
+	DNode m;
+	assert(q.Contains(m) == false);
 	
+	GraphNode *b = g.AddNode('b');
+	DNode k;
+	k.node = b;
+	q.push(k);
+	
+	assert(q.Contains(k) == true);
 	
 	cout << "PASSED!" << endl;
 }
@@ -49,26 +55,35 @@ void UpdateTest() {
 		q.push(cur);
 		//cout << "size: " << q.size() << endl;
 	}
-	
-
-	//cout << "q before: " << queue_to_string(q) << endl;
 
 	DNode positive;
 	positive.node = f;
 	positive.pri = 0;
-	cout << "q before: " << q.ToString() << endl;
+	//cout << "q before: " << q.ToString() << endl;
 	assert(q.Update(positive) == true);
-	cout << "q after: " << q.ToString() << endl;
+	//cout << "q after: " << q.ToString() << endl;
 
 
 	// Either one of these solutions is correct depending on
 	// how you implement the priority queue
 	string soln1 = "[(a: 0), (b: 1), (f: 0), (d: 3), (e: 4), (c: 2)]";
 	string soln2 = "[(f: 0), (b: 1), (a: 0), (d: 3), (e: 4), (c: 2)]";
-	assert(q.ToString() == soln1 || q.ToString() == soln2);
+	string soln3 = "[(f: 0), (a: 0), (b: 1), (c: 2), (d: 3), (e: 4)]";
+	assert(q.ToString() == soln1 || q.ToString() == soln2 || q.ToString() == soln3);
 	
 	
-	// more tests go here...
+	DNode neg1;
+	neg1.node = e;
+	neg1.pri = 5;
+	assert(q.Update(neg1) == false);
+	
+	GraphNode *h = new GraphNode;
+	h->key = 'h';
+	h->data = 3;
+	DNode neg2;
+	neg2.node = e;
+	neg2.pri = 5;
+	assert(q.Update(neg2) == false);
 	
 	
 	cout << "PASSED!" << endl;
