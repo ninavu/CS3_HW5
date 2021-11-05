@@ -42,15 +42,15 @@ const vector<GraphNode*>& Graph::GetNodes() const{
 
 
 const vector<GraphEdge*>& Graph::GetEdges(const GraphNode *gn) const{
-	vector<GraphEdge*> edges = new vector<GraphEdge>;
+	int idx = -1;
 	
 	for (unsigned int i = 0; i < AllNodes.size(); i++){
 		if (gn->key == AllNodes.at(i)->key){
-			edges = AllEdges.at(i);
+			idx = i;
 		}
 	}
 	
-	return edges;
+	return AllEdges.at(idx);
 }
 
 string Graph::GraphNodeToString(const GraphNode *gn){
