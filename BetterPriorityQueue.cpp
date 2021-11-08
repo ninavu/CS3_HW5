@@ -23,7 +23,7 @@ bool BetterPriorityQueue::Update(DNode dn){
 	vector<DNode> list;
 	
 	tmp = this->top();
-	while (!(tmp.node == dn.node)){
+	while (!(tmp.node == dn.node) && !(this->empty())){
 		list.push_back(tmp);
 		this->pop();
 		tmp = this->top();
