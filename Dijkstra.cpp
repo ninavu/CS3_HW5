@@ -16,52 +16,62 @@ using namespace std;
 
 
 int dijkstra(const GraphNode *start, const GraphNode *end, Graph *g){
-	BetterPriorityQueue path; 
-	vector<const GraphNode*> list;		
+	BetterPriorityQueue path; 			// the queue contains all the edges connected to the nodes
+	vector<const GraphNode*> list;	
+	vector<DNode> visits;
 	int result = 0;
 	
+	DNode min;			// create an original node to start
+	min.node = start;
+	min.pri = 0;
+	path.push(min);
 	
-	DNode org;			// create an original node to start
-	org.node = start;
-	org.pri = 0;
-	path.push(org);
-	
-	// what if the end is not connected?
-	
-	//while 
+
 	while (!(path.empty())){
-		DNode min = path.top();
+			
+		if (count(g->GetNodes().begin(), g->GetNodes().end(), min.node)){
+			for (unsigned int i = 0; i < g->GetEdges(min.node).size(); i++){
+				DNode edge;
+				edge.node = g->GetEdges(min.node).at(i)->to;
+				edge.pri = min.pri + g->GetEdges(min.node).at(i)->weight;
+				//cout << "dnode edge: " << path.DnodeToString(edge) << endl;
+				
+				if (!(count(list.begin(), list.end(), edge.node)) && !(path.Contains(edge))){
+					path.push(edge);
+					//cout << "newnode queue: " << path.ToString() << endl;	
+					
+				} else {
+					path.Update(edge);
+					//cout << "updated queue: " << path.ToString() << endl;
+				}
+			}
+		
 		min.visited = true; 
 		list.push_back(min.node);
+		visits.push_back(min);
 		
-		for (unsigned int i = 0; i < g->GetEdges(min.node).size(); i++){
-			DNode edge;
-			edge.node = g->GetEdges(min.node).at(i)->to;
-			edge.pri = min.pri + g->GetEdges(min.node).at(i)->weight;
-			cout << "dnode tmp: " << path.DnodeToString(edge) << endl;
-			
-			if (!(count(list.begin(), list.end(), edge.node)) && !(path.Contains(edge))){
-				path.push(edge);
-				cout << "sth queue: " << path.ToString() << endl;
-				
-				
-			} else {
-				path.Update(edge);
-				cout << "updated queue: " << path.ToString() << endl;
-			}
-			
-			//cout << "alledges size: " << g->GetEdges(min.node).size() << endl;
-		
-		}
+		}	
 		
 		path.pop();
-		result = min.pri;
+		min = path.top();
 		
-		cout << "min: " << result << endl;
-		cout << "new queue: " << path.ToString() << endl;
-		
+		//cout << "new queue: " << path.ToString() << endl;
 	}
 	
+	if (visits.size() == 0){
+		throw invalid_argument("Start node is not in the graph!");
+			
+	} else {
+		for (unsigned int i = 0; i < visits.size(); i++){
+			//cout << path.DnodeToString(visits.at(i)) << endl;
+			if (visits.at(i).node == end){
+				result = visits.at(i).pri;
+			} else if (!(count(list.begin(), list.end(), end))){
+				result = INT_MAX;
+			}
+		}
+	}
+
 	return result;
 }
 
@@ -71,6 +81,7 @@ int DijkstraTest(){
 	// other / more tests.  I recommend you do the same!
 	
 	Graph *g = new Graph();
+	Graph *t = new Graph();		// create another graph
 	
 	GraphNode *a = g->AddNode('1');
 	GraphNode *b = g->AddNode('2');
@@ -78,6 +89,9 @@ int DijkstraTest(){
 	GraphNode *d = g->AddNode('4');
 	GraphNode *e = g->AddNode('5');
 	GraphNode *f = g->AddNode('6');
+	GraphNode *h = g->AddNode('7');		// a node that doesn't have any edges
+	
+	GraphNode *z = t->AddNode('9');		// a node belongs to a different graph
 	
 	g->AddEdge(a, b, 7);
 	g->AddEdge(b, a, 7);
@@ -103,12 +117,48 @@ int DijkstraTest(){
 	g->AddEdge(e, d, 6);
 	
 	
-	cout << g->ToString() << endl;
+	cout << g->ToString() << endl << endl;
+	//cout << t->ToString() << endl;
 	
 	unsigned int ans = dijkstra(g->NodeAt(0), e, g);
 	assert(ans == 20);
+	
+	// random test cases
+	unsigned int ans1 = dijkstra(g->NodeAt(0), f, g);
+	assert(ans1 == 11);
+	
+	unsigned int ans2 = dijkstra(g->NodeAt(1), d, g);
+	assert(ans2 == 15);
+	
+	// test: start node == end node
+	unsigned int ans3 = dijkstra(g->NodeAt(2), c, g);
+	assert(ans3 == 0);
+	
+	// test: the end node doesn't connect to any nodes in the graph
+	unsigned int ans4 = dijkstra(g->NodeAt(2), h, g);
+	//cout << ans4 << endl;
+	assert(ans4 == INT_MAX);
+	
+	// test: the end node belongs to another graph
+	unsigned int ans5 = dijkstra(g->NodeAt(1), z, g);
+	//cout << ans5 << endl;
+	assert(ans5 == INT_MAX);
+	
+	// test: the start node doesn't connect to any nodes in the graph
+	unsigned int ans6 = dijkstra(t->NodeAt(0), h, t);
+	assert(ans6 == INT_MAX);
+	
+	// test: the start node belongs to another graph
+	try{
+		unsigned int ans7 = dijkstra(t->NodeAt(0), h, g);
+		assert(ans7 == false);
+		
+	} catch(const invalid_argument& e){
+		
+	}	
 
 	delete g;
+	delete t;
 		
 	return ans;
 }
