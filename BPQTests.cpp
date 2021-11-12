@@ -68,22 +68,29 @@ void UpdateTest() {
 	// how you implement the priority queue
 	string soln1 = "[(a: 0), (b: 1), (f: 0), (d: 3), (e: 4), (c: 2)]";
 	string soln2 = "[(f: 0), (b: 1), (a: 0), (d: 3), (e: 4), (c: 2)]";
-	//string soln3 = "[(f: 0), (a: 0), (b: 1), (c: 2), (d: 3), (e: 4)]";
 	assert(q.ToString() == soln1 || q.ToString() == soln2);
 	
-	
+	// Test with a larger priority
 	DNode neg1;
 	neg1.node = e;
 	neg1.pri = 5;
 	assert(q.Update(neg1) == false);
+	//cout << "q after after: " << q.ToString() << endl;
 	
+	
+	// Test to an undefined input
 	GraphNode *h = new GraphNode;
 	h->key = 'h';
-	h->data = 3;
 	DNode neg2;
-	neg2.node = e;
-	neg2.pri = 5;
+	neg2.node = h;
+	neg2.pri = 3;
 	assert(q.Update(neg2) == false);
+	
+	// Test: Update empty input
+	DNode negative;
+	assert(q.Update(negative) == false);
+	//cout << "q after after: " << q.ToString() << endl;
+	assert(q.ToString() == soln1 || q.ToString() == soln2);
 	
 	
 	cout << "PASSED!" << endl;

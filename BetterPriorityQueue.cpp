@@ -21,24 +21,34 @@ bool BetterPriorityQueue::Contains(DNode dn){
 bool BetterPriorityQueue::Update(DNode dn){
 	DNode tmp;
 	vector<DNode> list;
+	BetterPriorityQueue q_copy = *this;		// copy existing priority queue
+	BetterPriorityQueue* q = &q_copy;
 	
-	tmp = this->top();
-	while (!(tmp.node == dn.node) && !(this->empty())){
+	if (dn.node == nullptr || !(this->Contains(dn))){
+		return false;
+	}
+	
+	tmp = q->top();
+	while (!(tmp.node == dn.node) && !(q->empty())){
 		list.push_back(tmp);
-		this->pop();
-		tmp = this->top();
+		q->pop();
+		tmp = q->top();
 	}
 		
 	if (!(dn > tmp)){
-		this->pop();
+		q->pop();
+		
 		for (unsigned int i = 0; i < list.size(); i++){
-			this->push(list.at(i));
+			q->push(list.at(i));
 		}
-		this->push(dn); 	
+		q->push(dn);
+		//cout << "q: " << q.ToString() << endl;
+		*this = *q;			// update the priority queue by copying q
+			
 	} else {
 		return false;
 	}
-	// if DNode doesn’t match any existing in the queue or doesn’t have a lower priority than the matching DNode in the queue
+	
 	return true;
 }
 
