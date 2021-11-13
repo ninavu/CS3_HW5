@@ -5,13 +5,16 @@
 #include <cassert>
 #include <vector>
 #include <algorithm>
+#include <queue>
 
 using namespace std;
 
 // This file is not used for part 1
 
 /* Time Complexity of this algorithm: O(n^2)
- * 
+ * A while loop and for-loop: O(n^2)
+ * Update() function: O(n)
+ * Built-in functions for queue: O(log(n))
  */
 
 
