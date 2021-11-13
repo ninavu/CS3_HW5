@@ -17,8 +17,8 @@ using namespace std;
 
 int dijkstra(const GraphNode *start, const GraphNode *end, Graph *g){
 	BetterPriorityQueue path; 			// the queue contains all the edges connected to the nodes
-	vector<const GraphNode*> list;	
-	vector<DNode> visits;
+	vector<const GraphNode*> list;		// a vector contains all the nodes visited
+	vector<DNode> visits;				// a vector contains all the DNodes visited
 	int result = 0;
 	
 	DNode min;			// create an original node to start
@@ -29,44 +29,47 @@ int dijkstra(const GraphNode *start, const GraphNode *end, Graph *g){
 
 	while (!(path.empty())){
 			
-		if (count(g->GetNodes().begin(), g->GetNodes().end(), min.node)){
+		if (count(g->GetNodes().begin(), g->GetNodes().end(), min.node)){			// make sure start node is in the graph g
+			
 			for (unsigned int i = 0; i < g->GetEdges(min.node).size(); i++){
-				DNode edge;
+				DNode edge;			// goes through all the edges of min.node
 				edge.node = g->GetEdges(min.node).at(i)->to;
 				edge.pri = min.pri + g->GetEdges(min.node).at(i)->weight;
 				//cout << "dnode edge: " << path.DnodeToString(edge) << endl;
 				
-				if (!(count(list.begin(), list.end(), edge.node)) && !(path.Contains(edge))){
+				if (!(count(list.begin(), list.end(), edge.node)) && !(path.Contains(edge))){	// if edge node hasn't marked visited and is not in the queue
 					path.push(edge);
 					//cout << "newnode queue: " << path.ToString() << endl;	
 					
 				} else {
-					path.Update(edge);
+					path.Update(edge);		// call Update() function to push the edge with lower priority
 					//cout << "updated queue: " << path.ToString() << endl;
 				}
 			}
 		
-		min.visited = true; 
+		min.visited = true; 			// mark the node as visited and push it into vectors
 		list.push_back(min.node);
 		visits.push_back(min);
 		
 		}	
 		
-		path.pop();
+		path.pop();						// remove the min node from the queue and choose the new min node
 		min = path.top();
 		
 		//cout << "new queue: " << path.ToString() << endl;
 	}
 	
-	if (visits.size() == 0){
+	if (visits.size() == 0){		// throw an exception when the start node is not in the graph
 		throw invalid_argument("Start node is not in the graph!");
 			
 	} else {
-		for (unsigned int i = 0; i < visits.size(); i++){
+		
+		// make sure the algoritm goes through every single node to find the shortest path from start node to end node
+		for (unsigned int i = 0; i < visits.size(); i++){		
 			//cout << path.DnodeToString(visits.at(i)) << endl;
-			if (visits.at(i).node == end){
+			if (visits.at(i).node == end){						// find the answer attached to the end node
 				result = visits.at(i).pri;
-			} else if (!(count(list.begin(), list.end(), end))){
+			} else if (!(count(list.begin(), list.end(), end))){	// if end node is not in the visited list, return INT_MAX
 				result = INT_MAX;
 			}
 		}
@@ -92,6 +95,7 @@ int DijkstraTest(){
 	GraphNode *h = g->AddNode('7');		// a node that doesn't have any edges
 	
 	GraphNode *z = t->AddNode('9');		// a node belongs to a different graph
+	GraphNode *y = t->AddNode('8');
 	
 	g->AddEdge(a, b, 7);
 	g->AddEdge(b, a, 7);
@@ -117,7 +121,7 @@ int DijkstraTest(){
 	g->AddEdge(e, d, 6);
 	
 	
-	cout << g->ToString() << endl << endl;
+	cout << g->ToString() << endl;
 	//cout << t->ToString() << endl;
 	
 	unsigned int ans = dijkstra(g->NodeAt(0), e, g);
@@ -156,6 +160,10 @@ int DijkstraTest(){
 	} catch(const invalid_argument& e){
 		
 	}	
+	
+	// test: the nodes are not connected to each other in the graph
+	unsigned int ans8 = dijkstra(t->NodeAt(0), y, t);
+	assert(ans8 == INT_MAX);
 
 	delete g;
 	delete t;
